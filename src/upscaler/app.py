@@ -11,7 +11,7 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from PIL import Image
 
-from .upscaler import get_upsampler, resize_to_target
+from .upscaler import cm_to_pixels, get_upsampler, resize_to_target
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -32,21 +32,69 @@ async def root():
 
 @app.post("/upscale")
 async def upscale_image(
-    image: UploadFile = File(...), target_width: int = Form(...), target_height: int = Form(...)
+    image: UploadFile = File(...),
+    target_width: int = Form(None),
+    target_height: int = Form(None),
+    width_cm: float = Form(None),
+    height_cm: float = Form(None),
+    dpi: int = Form(None),
 ):
     """
     Upscale an image to target dimensions using Real-ESRGAN.
     The aspect ratio is preserved.
 
+    You can specify dimensions in two ways:
+    1. Directly in pixels using target_width and target_height
+    2. In centimeters and DPI using width_cm, height_cm, and dpi
+
     Args:
         image: Image file to upscale
-        target_width: Target width in pixels (1-4096)
-        target_height: Target height in pixels (1-4096)
+        target_width: Target width in pixels (1-10000) - used if width_cm is not provided
+        target_height: Target height in pixels (1-10000) - used if height_cm is not provided
+        width_cm: Target width in centimeters (0.1-400) - alternative to target_width
+        height_cm: Target height in centimeters (0.1-400) - alternative to target_height
+        dpi: Dots per inch (10-1200) - required when using width_cm/height_cm
 
     Returns:
         StreamingResponse with the upscaled image as PNG
     """
-    # Validate inputs
+    # Determine which input method to use
+    if width_cm is not None or height_cm is not None or dpi is not None:
+        # Using cm/dpi mode
+        if width_cm is None or height_cm is None or dpi is None:
+            raise HTTPException(
+                status_code=400,
+                detail="When using cm/dpi mode, all three parameters (width_cm, height_cm, dpi) are required",
+            )
+
+        # Validate cm dimensions
+        if width_cm < 0.1 or width_cm > 400:
+            raise HTTPException(
+                status_code=400, detail="Width must be between 0.1 and 400 centimeters"
+            )
+        if height_cm < 0.1 or height_cm > 400:
+            raise HTTPException(
+                status_code=400, detail="Height must be between 0.1 and 400 centimeters"
+            )
+
+        # Validate DPI
+        if dpi < 10 or dpi > 1200:
+            raise HTTPException(status_code=400, detail="DPI must be between 10 and 1200")
+
+        # Convert cm to pixels
+        target_width, target_height = cm_to_pixels(width_cm, height_cm, dpi)
+        logger.info(
+            f"Converted {width_cm}cm x {height_cm}cm @ {dpi}dpi to {target_width}px x {target_height}px"
+        )
+    else:
+        # Using pixel mode
+        if target_width is None or target_height is None:
+            raise HTTPException(
+                status_code=400,
+                detail="Either provide target_width and target_height (in pixels) or width_cm, height_cm, and dpi",
+            )
+
+    # Validate pixel dimensions
     if target_width < 1 or target_width > 10000:
         raise HTTPException(status_code=400, detail="Width must be between 1 and 10000 pixels")
     if target_height < 1 or target_height > 10000:
