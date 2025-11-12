@@ -46,6 +46,7 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/) standard
 - Mark slow tests (requiring AI model) with `@pytest.mark.slow`
 - Maintain test coverage above 80%
 - Run tests with: `make test` or `PYTHONPATH=src pytest tests/ -v`
+- **CRITICAL**: When making changes to `src/upscaler/upscaler.py` or `src/upscaler/app.py`, ALWAYS run an end-to-end test to verify that image upscaling works correctly. This ensures the AI model integration is not broken.
 
 ### API Design
 - Use FastAPI's dependency injection and validation
@@ -128,6 +129,7 @@ async def endpoint_handler(
 1. Run linters before committing: `make lint`
 2. Format code: `make format`
 3. Run tests: `make test`
-4. Update tests when changing validation logic
-5. Update README when adding new features or commands
-6. Keep the Makefile up to date with new commands
+4. **If modifying upscaler core files** (`src/upscaler/upscaler.py` or `src/upscaler/app.py`): Run full test suite including slow tests with `PYTHONPATH=src pytest tests/ -v` to ensure end-to-end image upscaling still works
+5. Update tests when changing validation logic
+6. Update README when adding new features or commands
+7. Keep the Makefile up to date with new commands
