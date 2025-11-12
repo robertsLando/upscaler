@@ -81,7 +81,7 @@ class TestUpscaleEndpoint:
         response = client.post(
             "/upscale",
             files={"image": ("test.jpg", img_bytes, "image/jpeg")},
-            data={"target_width": 5000, "target_height": 400},
+            data={"target_width": 11000, "target_height": 400},
         )
         assert response.status_code == 400
 
@@ -102,7 +102,7 @@ class TestUpscaleEndpoint:
         response = client.post(
             "/upscale",
             files={"image": ("test.jpg", img_bytes, "image/jpeg")},
-            data={"target_width": 400, "target_height": 5000},
+            data={"target_width": 400, "target_height": 11000},
         )
         assert response.status_code == 400
 

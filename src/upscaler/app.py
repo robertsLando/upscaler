@@ -47,10 +47,10 @@ async def upscale_image(
         StreamingResponse with the upscaled image as PNG
     """
     # Validate inputs
-    if target_width < 1 or target_width > 4096:
-        raise HTTPException(status_code=400, detail="Width must be between 1 and 4096 pixels")
-    if target_height < 1 or target_height > 4096:
-        raise HTTPException(status_code=400, detail="Height must be between 1 and 4096 pixels")
+    if target_width < 1 or target_width > 10000:
+        raise HTTPException(status_code=400, detail="Width must be between 1 and 10000 pixels")
+    if target_height < 1 or target_height > 10000:
+        raise HTTPException(status_code=400, detail="Height must be between 1 and 10000 pixels")
 
     # Check file type
     if not image.content_type.startswith("image/"):

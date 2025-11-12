@@ -105,8 +105,8 @@ make test-cov
 
 **Parameters:**
 - `image`: Image file (multipart/form-data)
-- `target_width`: Target width in pixels (1-4096)
-- `target_height`: Target height in pixels (1-4096)
+- `target_width`: Target width in pixels (1-10000)
+- `target_height`: Target height in pixels (1-10000)
 
 **Example using curl:**
 
