@@ -18,6 +18,9 @@ dependencies = [
     "uvicorn[standard]>=0.38.0",
 ]
 
+[project.scripts]
+upscaler-cli = "upscaler.cli:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

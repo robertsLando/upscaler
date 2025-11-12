@@ -23,6 +23,7 @@ Then open http://localhost:8000 in your browser! 🚀
 ## Features
 
 - 🚀 Fast image upscaling using Real-ESRGAN
+- 💻 Command-line interface for batch processing with glob patterns
 - 🎨 Web UI for easy image upload and download
 - 📐 Aspect ratio preservation
 - 🔧 RESTful API for programmatic access
@@ -55,6 +56,38 @@ make install
 ```
 
 ## Usage
+
+### CLI Usage
+
+The CLI allows batch processing of images using glob patterns.
+
+**Command:**
+
+```bash
+upscaler-cli <glob_pattern> <target_width> <target_height>
+```
+
+**Examples:**
+
+```bash
+# Upscale all JPG files in current directory to 1920x1080
+upscaler-cli "*.jpg" 1920 1080
+
+# Upscale all PNG files in images/ directory to 2560x1440
+upscaler-cli "images/*.png" 2560 1440
+
+# Upscale a specific image to 3840x2160
+upscaler-cli "photo.jpg" 3840 2160
+
+# Enable verbose logging
+upscaler-cli -v "*.jpg" 1920 1080
+```
+
+**Options:**
+- `-v, --verbose`: Enable verbose logging
+- `-h, --help`: Show help message
+
+Upscaled images are saved with `_upscaled` suffix in the same directory as the original.
 
 ### Starting the Server
 
