@@ -14,7 +14,8 @@ cd upscaler
 uv sync
 
 # Run the server
-uv run python main.py
+make run
+# Or: uv run python -m upscaler
 ```
 
 Then open http://localhost:8000 in your browser! 🚀
@@ -26,6 +27,8 @@ Then open http://localhost:8000 in your browser! 🚀
 - 📐 Aspect ratio preservation
 - 🔧 RESTful API for programmatic access
 - 📦 Managed with uv for fast dependency resolution
+- 🧪 Comprehensive test suite
+- 🎯 Linting and formatting with ruff and black
 
 ## Requirements
 
@@ -47,26 +50,46 @@ cd upscaler
 
 3. Install dependencies using uv:
 ```bash
-uv sync
+make install
+# Or: uv sync
 ```
 
 ## Usage
 
 ### Starting the Server
 
-Run the server using uv:
+Run the server using Make:
 
 ```bash
-uv run python main.py
+make run
 ```
 
-Or using uvicorn directly:
+Or using uv directly:
 
 ```bash
-uv run uvicorn main:app --host 0.0.0.0 --port 8000
+uv run python -m upscaler
 ```
 
 The server will start at `http://localhost:8000`
+
+### Development
+
+```bash
+# Run tests
+make test
+
+# Run linter
+make lint
+
+# Format code
+make format
+
+# Run all tests including slow ones
+uv run pytest tests/ -v
+
+# Run with coverage
+make test-cov
+```
 
 ### Web UI
 
@@ -122,12 +145,37 @@ curl http://localhost:8000/health
 3. **Resize**: The upscaled image is resized to fit target dimensions while preserving aspect ratio
 4. **Download**: The final image is returned as a PNG file
 
+## Project Structure
+
+```
+upscaler/
+├── src/
+│   └── upscaler/
+│       ├── __init__.py         # Package initialization
+│       ├── __main__.py         # Entry point for running the app
+│       ├── app.py              # FastAPI application and routes
+│       ├── upscaler.py         # Core upscaling logic
+│       └── templates/
+│           └── index.html      # Web UI template
+├── tests/
+│   ├── __init__.py
+│   ├── test_api.py             # API integration tests
+│   └── test_upscaler.py        # Unit tests
+├── Makefile                    # Common development commands
+├── pyproject.toml              # Project configuration and dependencies
+├── uv.lock                     # Locked dependency versions
+└── README.md                   # This file
+```
+
 ## Technical Details
 
 - **Framework**: FastAPI for the web API
 - **AI Model**: Real-ESRGAN (x4plus) for high-quality upscaling
 - **Image Processing**: Pillow (PIL) for image manipulation
 - **Package Manager**: uv for fast, reliable dependency management
+- **Testing**: pytest with comprehensive unit and integration tests
+- **Linting**: ruff for fast Python linting
+- **Formatting**: black for code formatting
 
 ## Model Information
 
