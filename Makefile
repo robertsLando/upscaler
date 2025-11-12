@@ -41,4 +41,4 @@ clean:
 	rm -rf .pytest_cache .coverage htmlcov
 
 run:
-	PYTHONPATH=src python -m upscaler
+	PYTHONPATH=src uv run python -m upscaler
