@@ -2,6 +2,23 @@
 
 AI-powered image upscaler using Real-ESRGAN with a web API and UI.
 
+## Quick Start
+
+```bash
+# Install uv
+pip install uv
+
+# Clone and setup
+git clone https://github.com/robertsLando/upscaler.git
+cd upscaler
+uv sync
+
+# Run the server
+uv run python main.py
+```
+
+Then open http://localhost:8000 in your browser! 🚀
+
 ## Features
 
 - 🚀 Fast image upscaling using Real-ESRGAN
