@@ -18,10 +18,10 @@ dev-install:
 	uv add --dev pytest pytest-cov ruff black
 
 test:
-	PYTHONPATH=src pytest tests/ -v
+	PYTHONPATH=src uv run pytest tests/ -v
 
 test-cov:
-	PYTHONPATH=src pytest tests/ --cov=src/upscaler --cov-report=html --cov-report=term
+	PYTHONPATH=src uv run pytest tests/ --cov=src/upscaler --cov-report=html --cov-report=term
 
 lint:
 	uv run ruff check src/ tests/
