@@ -18,6 +18,28 @@ This is a Python web application that provides AI-powered image upscaling using 
 - **HTML/CSS/JS**: Use prettier for formatting (configured in `.prettierrc`)
 - **Imports**: Keep imports organized (stdlib → third-party → local)
 
+### Commit Messages
+Follow the [Conventional Commits](https://www.conventionalcommits.org/) standard for all commit messages:
+- **Format**: `<type>(<scope>): <description>`
+- **Types**:
+  - `feat`: New feature
+  - `fix`: Bug fix
+  - `docs`: Documentation changes
+  - `style`: Code style changes (formatting, missing semicolons, etc.)
+  - `refactor`: Code refactoring without changing functionality
+  - `perf`: Performance improvements
+  - `test`: Adding or updating tests
+  - `build`: Changes to build system or dependencies
+  - `ci`: CI/CD configuration changes
+  - `chore`: Other changes that don't modify src or test files
+- **Scope**: Optional, indicates the area affected (e.g., `api`, `upscaler`, `tests`, `makefile`)
+- **Examples**:
+  - `feat(api): add batch upload endpoint`
+  - `fix(upscaler): resolve memory leak in model loading`
+  - `docs: update installation instructions`
+  - `test(api): add tests for error handling`
+  - `chore(deps): update torch to 2.4.1`
+
 ### Testing
 - Write unit tests for core logic functions
 - Write integration tests for API endpoints using FastAPI TestClient
