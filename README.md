@@ -25,6 +25,9 @@ Then open http://localhost:8000 in your browser! 🚀
 - 🚀 Fast image upscaling using Real-ESRGAN
 - 🎨 Web UI for easy image upload and download
 - 📐 Aspect ratio preservation
+- 📏 Dual dimension input modes:
+  - **Pixels**: Direct pixel dimensions (1-10000 px)
+  - **Centimeters + DPI**: Physical dimensions with resolution (0.1-400 cm, 10-1200 DPI)
 - 🔧 RESTful API for programmatic access
 - 📦 Managed with uv for fast dependency resolution
 - 🧪 Comprehensive test suite
@@ -95,7 +98,9 @@ make test-cov
 
 1. Open your browser and navigate to `http://localhost:8000`
 2. Upload an image
-3. Set target width and height (in pixels)
+3. Choose your preferred dimension mode:
+   - **Pixels (px)**: Set target width and height directly in pixels
+   - **Centimeters + DPI**: Set dimensions in centimeters and specify DPI resolution
 4. Click "Upscale Image"
 5. Preview and download the upscaled result
 
@@ -103,12 +108,18 @@ make test-cov
 
 **Endpoint:** `POST /upscale`
 
-**Parameters:**
+**Parameters (Pixel Mode):**
 - `image`: Image file (multipart/form-data)
 - `target_width`: Target width in pixels (1-10000)
 - `target_height`: Target height in pixels (1-10000)
 
-**Example using curl:**
+**Parameters (CM/DPI Mode):**
+- `image`: Image file (multipart/form-data)
+- `width_cm`: Target width in centimeters (0.1-400)
+- `height_cm`: Target height in centimeters (0.1-400)
+- `dpi`: Dots per inch resolution (10-1200)
+
+**Example using curl (pixels):**
 
 ```bash
 curl -X POST "http://localhost:8000/upscale" \
@@ -118,14 +129,36 @@ curl -X POST "http://localhost:8000/upscale" \
   --output upscaled.png
 ```
 
+**Example using curl (centimeters + DPI):**
+
+```bash
+# A4 size at 300 DPI
+curl -X POST "http://localhost:8000/upscale" \
+  -F "image=@input.jpg" \
+  -F "width_cm=21" \
+  -F "height_cm=29.7" \
+  -F "dpi=300" \
+  --output upscaled.png
+```
+
 **Example using Python:**
 
 ```python
 import requests
 
+# Using pixels
 with open('input.jpg', 'rb') as f:
     files = {'image': f}
     data = {'target_width': 1920, 'target_height': 1080}
+    response = requests.post('http://localhost:8000/upscale', files=files, data=data)
+    
+    with open('upscaled.png', 'wb') as out:
+        out.write(response.content)
+
+# Using centimeters and DPI
+with open('input.jpg', 'rb') as f:
+    files = {'image': f}
+    data = {'width_cm': 10, 'height_cm': 15, 'dpi': 300}
     response = requests.post('http://localhost:8000/upscale', files=files, data=data)
     
     with open('upscaled.png', 'wb') as out:
