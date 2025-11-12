@@ -1,9 +1,15 @@
 import os
 import io
+import sys
 import tempfile
 from pathlib import Path
 from typing import Optional
 import logging
+
+# Patch for torchvision compatibility with basicsr
+# basicsr expects torchvision.transforms.functional_tensor which was renamed in newer versions
+import torchvision.transforms.functional as F
+sys.modules['torchvision.transforms.functional_tensor'] = F
 
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.responses import StreamingResponse, HTMLResponse

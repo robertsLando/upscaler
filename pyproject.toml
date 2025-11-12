@@ -10,5 +10,7 @@ dependencies = [
     "pillow>=12.0.0",
     "python-multipart>=0.0.20",
     "realesrgan>=0.3.0",
+    "torch<2.5",
+    "torchvision<0.20",
     "uvicorn[standard]>=0.38.0",
 ]
