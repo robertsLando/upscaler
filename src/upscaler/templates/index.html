@@ -90,11 +90,26 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+        }
+        footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🖼️ Image Upscaler</h1>
+        <h1>🐼 Pandas Image Upscaler</h1>
         <p style="text-align: center; color: #666;">Upload an image and specify target dimensions for AI-powered upscaling</p>
         
         <form id="uploadForm">
@@ -127,6 +142,10 @@
             <button id="downloadBtn" onclick="downloadImage()">Download Image</button>
         </div>
     </div>
+    
+    <footer>
+        Made with ❤️ by <a href="https://github.com/robertsLando" target="_blank">robertsLando</a>
+    </footer>
     
     <script>
         let uploadedImageData = null;
