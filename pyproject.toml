@@ -2,6 +2,9 @@
 name = "upscaler"
 version = "1.0.0"
 description = "AI-powered image upscaler using Real-ESRGAN with web API"
+authors = [
+    {name = "robertsLando", email = "daniel.sorridi@gmail.com"}
+]
 requires-python = ">=3.12"
 dependencies = [
     "basicsr>=1.4.2",
