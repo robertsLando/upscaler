@@ -24,12 +24,12 @@ test-cov:
 	PYTHONPATH=src pytest tests/ --cov=src/upscaler --cov-report=html --cov-report=term
 
 lint:
-	ruff check src/ tests/
-	black --check src/ tests/
+	uv run ruff check src/ tests/
+	uv run black --check src/ tests/
 
 format:
-	black src/ tests/
-	ruff check --fix src/ tests/
+	uv run black src/ tests/
+	uv run ruff check --fix src/ tests/
 
 format-html:
 	@command -v prettier >/dev/null 2>&1 && prettier --write "src/upscaler/templates/**/*.html" || echo "prettier not installed. Install with: npm install -g prettier"
