@@ -6,12 +6,12 @@ import io
 import logging
 from pathlib import Path
 
-import numpy as np
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from PIL import Image
 
-from .upscaler import cm_to_pixels, get_upsampler, resize_to_target
+from .upscaler import cm_to_pixels
+from .utils import upscale_image as upscale_image_util
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -109,29 +109,8 @@ async def upscale_image(
         contents = await image.read()
         img = Image.open(io.BytesIO(contents))
 
-        # Convert to RGB if necessary
-        if img.mode != "RGB":
-            img = img.convert("RGB")
-
-        logger.info(f"Original image size: {img.size}")
-
-        # Get upsampler
-        upsampler = get_upsampler()
-
-        # Convert PIL Image to numpy array
-        img_np = np.array(img)
-
-        # Upscale with Real-ESRGAN
-        logger.info("Starting upscaling process...")
-        output, _ = upsampler.enhance(img_np, outscale=4)
-        logger.info(f"Upscaled to: {output.shape}")
-
-        # Convert back to PIL Image
-        upscaled_img = Image.fromarray(output)
-
-        # Resize to target dimensions while preserving aspect ratio
-        final_img = resize_to_target(upscaled_img, target_width, target_height)
-        logger.info(f"Final image size: {final_img.size}")
+        # Upscale the image using shared utility function
+        final_img = upscale_image_util(img, target_width, target_height)
 
         # Save to bytes buffer
         img_byte_arr = io.BytesIO()

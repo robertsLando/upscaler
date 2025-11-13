@@ -23,6 +23,7 @@ Then open http://localhost:8000 in your browser! 🚀
 ## Features
 
 - 🚀 Fast image upscaling using Real-ESRGAN
+- 💻 Command-line interface for batch processing with glob patterns
 - 🎨 Web UI for easy image upload and download
 - 📐 Aspect ratio preservation
 - 📏 Dual dimension input modes:
@@ -58,6 +59,44 @@ make install
 ```
 
 ## Usage
+
+### CLI Usage
+
+The CLI allows batch processing of images using glob patterns with support for both pixel-based and physical dimensions (cm/DPI).
+
+**Command formats:**
+
+```bash
+# Using pixels
+upscaler-cli <glob_pattern> -w <width> --height <height>
+
+# Using centimeters and DPI
+upscaler-cli <glob_pattern> --width-cm <width> --height-cm <height> --dpi <dpi>
+```
+
+**Examples:**
+
+```bash
+# Upscale all JPG files in current directory to 1920x1080 pixels
+upscaler-cli "*.jpg" -w 1920 --height 1080
+
+# Upscale all PNG files using physical dimensions (20x15 cm at 300 DPI)
+upscaler-cli "images/*.png" --width-cm 20 --height-cm 15 --dpi 300
+
+# Upscale a specific image with verbose logging
+upscaler-cli -v "photo.jpg" -w 3840 --height 2160
+```
+
+**Options:**
+- `-w, --width`: Target width in pixels (1-10000)
+- `--height`: Target height in pixels (1-10000)
+- `--width-cm`: Target width in centimeters (0.1-400)
+- `--height-cm`: Target height in centimeters (0.1-400)
+- `--dpi`: Dots per inch (10-1200) - required when using cm dimensions
+- `-v, --verbose`: Enable verbose logging
+- `-h, --help`: Show help message
+
+Upscaled images are saved with `_upscaled` suffix in the same directory as the original.
 
 ### Starting the Server
 
