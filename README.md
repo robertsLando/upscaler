@@ -62,31 +62,37 @@ make install
 
 ### CLI Usage
 
-The CLI allows batch processing of images using glob patterns.
+The CLI allows batch processing of images using glob patterns with support for both pixel-based and physical dimensions (cm/DPI).
 
-**Command:**
+**Command formats:**
 
 ```bash
-upscaler-cli <glob_pattern> <target_width> <target_height>
+# Using pixels
+upscaler-cli <glob_pattern> -w <width> --height <height>
+
+# Using centimeters and DPI
+upscaler-cli <glob_pattern> --width-cm <width> --height-cm <height> --dpi <dpi>
 ```
 
 **Examples:**
 
 ```bash
-# Upscale all JPG files in current directory to 1920x1080
-upscaler-cli "*.jpg" 1920 1080
+# Upscale all JPG files in current directory to 1920x1080 pixels
+upscaler-cli "*.jpg" -w 1920 --height 1080
 
-# Upscale all PNG files in images/ directory to 2560x1440
-upscaler-cli "images/*.png" 2560 1440
+# Upscale all PNG files using physical dimensions (20x15 cm at 300 DPI)
+upscaler-cli "images/*.png" --width-cm 20 --height-cm 15 --dpi 300
 
-# Upscale a specific image to 3840x2160
-upscaler-cli "photo.jpg" 3840 2160
-
-# Enable verbose logging
-upscaler-cli -v "*.jpg" 1920 1080
+# Upscale a specific image with verbose logging
+upscaler-cli -v "photo.jpg" -w 3840 --height 2160
 ```
 
 **Options:**
+- `-w, --width`: Target width in pixels (1-10000)
+- `--height`: Target height in pixels (1-10000)
+- `--width-cm`: Target width in centimeters (0.1-400)
+- `--height-cm`: Target height in centimeters (0.1-400)
+- `--dpi`: Dots per inch (10-1200) - required when using cm dimensions
 - `-v, --verbose`: Enable verbose logging
 - `-h, --help`: Show help message
 

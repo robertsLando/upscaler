@@ -28,7 +28,7 @@ class TestUpscaleImagesBatch:
         os.chdir(tmp_path)
 
         try:
-            result = upscale_images_batch("*.jpg", 800, 600)
+            result = upscale_images_batch("*.jpg", target_width=800, target_height=600)
             assert result == 1
 
             assert "No files found" in caplog.text
@@ -47,7 +47,7 @@ class TestUpscaleImagesBatch:
             invalid_file = tmp_path / "test.jpg"
             invalid_file.write_text("not an image")
 
-            result = upscale_images_batch("*.jpg", 800, 600)
+            result = upscale_images_batch("*.jpg", target_width=800, target_height=600)
             # Should return 1 as no images were successfully processed
             assert result == 1
 
@@ -68,7 +68,7 @@ class TestUpscaleImagesBatch:
             test_file = tmp_path / "test.jpg"
             img.save(test_file)
 
-            result = upscale_images_batch("test.jpg", 400, 400)
+            result = upscale_images_batch("test.jpg", target_width=400, target_height=400)
             assert result == 0
 
             # Check output file exists
@@ -94,7 +94,7 @@ class TestUpscaleImagesBatch:
                 img = Image.new("RGB", (50, 50), color="blue")
                 img.save(tmp_path / f"test{i}.png")
 
-            result = upscale_images_batch("*.png", 200, 200)
+            result = upscale_images_batch("*.png", target_width=200, target_height=200)
             assert result == 0
 
             # Check all output files exist
@@ -119,7 +119,7 @@ class TestUpscaleImagesBatch:
             img = Image.new("RGB", (100, 100), color="green")
             img.save(subdir / "test.jpg")
 
-            result = upscale_images_batch("images/*.jpg", 400, 400)
+            result = upscale_images_batch("images/*.jpg", target_width=400, target_height=400)
             assert result == 0
 
             # Check output file exists in subdirectory
@@ -141,7 +141,7 @@ class TestUpscaleImagesBatch:
             test_file = tmp_path / "wide.jpg"
             img.save(test_file)
 
-            result = upscale_images_batch("wide.jpg", 800, 600)
+            result = upscale_images_batch("wide.jpg", target_width=800, target_height=600)
             assert result == 0
 
             # Check output preserves aspect ratio
@@ -166,7 +166,7 @@ class TestMainCLI:
 
     def test_invalid_width(self, caplog):
         """Test validation of width parameter."""
-        with patch("sys.argv", ["upscaler-cli", "*.jpg", "20000", "600"]):
+        with patch("sys.argv", ["upscaler-cli", "*.jpg", "-w", "20000", "--height", "600"]):
             result = main()
             assert result == 1
 
@@ -174,7 +174,7 @@ class TestMainCLI:
 
     def test_invalid_height(self, caplog):
         """Test validation of height parameter."""
-        with patch("sys.argv", ["upscaler-cli", "*.jpg", "800", "0"]):
+        with patch("sys.argv", ["upscaler-cli", "*.jpg", "-w", "800", "--height", "0"]):
             result = main()
             assert result == 1
 
@@ -182,10 +182,9 @@ class TestMainCLI:
 
     def test_missing_arguments(self):
         """Test that missing arguments cause error."""
-        with patch("sys.argv", ["upscaler-cli"]):
-            with pytest.raises(SystemExit) as exc_info:
-                main()
-            assert exc_info.value.code != 0
+        with patch("sys.argv", ["upscaler-cli", "*.jpg"]):
+            result = main()
+            assert result == 1
 
     def test_verbose_flag(self, tmp_path):
         """Test that verbose flag enables debug logging."""
@@ -200,8 +199,86 @@ class TestMainCLI:
             test_file = tmp_path / "test.jpg"
             img.save(test_file)
 
-            with patch("sys.argv", ["upscaler-cli", "-v", "test.jpg", "400", "400"]):
+            with patch(
+                "sys.argv", ["upscaler-cli", "-v", "test.jpg", "-w", "400", "--height", "400"]
+            ):
                 result = main()
                 assert result == 0
         finally:
             os.chdir(original_dir)
+
+    def test_cm_dpi_mode(self, tmp_path):
+        """Test processing with cm and DPI mode."""
+        import os
+
+        original_dir = os.getcwd()
+        os.chdir(tmp_path)
+
+        try:
+            # Create a test image
+            img = Image.new("RGB", (100, 100), color="blue")
+            test_file = tmp_path / "test.jpg"
+            img.save(test_file)
+
+            result = upscale_images_batch("test.jpg", width_cm=10.0, height_cm=10.0, dpi=100)
+            assert result == 0
+
+            # Check output file exists
+            output_file = tmp_path / "test_upscaled.jpg"
+            assert output_file.exists()
+        finally:
+            os.chdir(original_dir)
+
+    def test_cm_dpi_mode_cli(self, tmp_path):
+        """Test CLI with cm and DPI arguments."""
+        import os
+
+        original_dir = os.getcwd()
+        os.chdir(tmp_path)
+
+        try:
+            # Create a test image
+            img = Image.new("RGB", (100, 100), color="green")
+            test_file = tmp_path / "test.jpg"
+            img.save(test_file)
+
+            with patch(
+                "sys.argv",
+                [
+                    "upscaler-cli",
+                    "test.jpg",
+                    "--width-cm",
+                    "10",
+                    "--height-cm",
+                    "10",
+                    "--dpi",
+                    "100",
+                ],
+            ):
+                result = main()
+                assert result == 0
+
+            # Check output file exists
+            output_file = tmp_path / "test_upscaled.jpg"
+            assert output_file.exists()
+        finally:
+            os.chdir(original_dir)
+
+    def test_mixed_mode_error(self, caplog):
+        """Test that mixing pixel and cm modes produces error."""
+        with patch(
+            "sys.argv",
+            [
+                "upscaler-cli",
+                "*.jpg",
+                "-w",
+                "800",
+                "--height",
+                "600",
+                "--width-cm",
+                "10",
+            ],
+        ):
+            result = main()
+            assert result == 1
+            assert "Cannot mix" in caplog.text

@@ -12,6 +12,19 @@ This is a Python web application that provides AI-powered image upscaling using 
 
 ## Development Guidelines
 
+### Design Patterns & Software Architecture
+- **DRY Principle (Don't Repeat Yourself)**: Extract common functionality into shared utilities
+  - Shared logic should be moved to `src/upscaler/utils.py`
+  - Both API and CLI should use the same core upscaling logic
+- **Single Responsibility**: Each module should have a clear, focused purpose
+  - `upscaler.py`: Core upscaling functions and model management
+  - `utils.py`: Shared utility functions used across multiple modules
+  - `app.py`: API routes and web server
+  - `cli.py`: Command-line interface
+- **Separation of Concerns**: Keep business logic separate from presentation/interface logic
+- **Code Reusability**: Write functions that can be used in multiple contexts
+- **Modularity**: Keep modules loosely coupled and easily testable
+
 ### Code Style
 - **Linting**: Use ruff for Python linting (configured in `pyproject.toml`)
 - **Formatting**: Use black for code formatting (line length: 100)
@@ -76,9 +89,13 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/) standard
 ## Key Files
 - `src/upscaler/app.py`: FastAPI application and routes
 - `src/upscaler/upscaler.py`: Core upscaling logic with Real-ESRGAN
+- `src/upscaler/utils.py`: Shared utility functions (e.g., upscale_image)
+- `src/upscaler/cli.py`: Command-line interface for batch processing
 - `src/upscaler/templates/index.html`: Web UI
 - `tests/test_api.py`: API integration tests
 - `tests/test_upscaler.py`: Unit tests for upscaling logic
+- `tests/test_utils.py`: Tests for shared utility functions
+- `tests/test_cli.py`: CLI tests
 - `pyproject.toml`: Project configuration and dependencies
 - `Makefile`: Development workflow commands
 
