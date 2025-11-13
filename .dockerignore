@@ -25,5 +25,3 @@ Thumbs.db
 README.md
 CHANGELOG.md
 tests
-*.md
-!src/**/*.md

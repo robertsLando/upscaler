@@ -20,7 +20,7 @@ COPY pyproject.toml ./
 COPY src/ src/
 
 # Install dependencies and the package
-RUN pip install --no-cache-dir --user -e .
+RUN pip install --no-cache-dir .
 
 # Stage 2: Runtime
 FROM python:3.12-slim
@@ -28,22 +28,17 @@ FROM python:3.12-slim
 # Set working directory
 WORKDIR /app
 
-# Copy only the necessary files from builder
-COPY --from=builder /root/.local /root/.local
+# Copy installed packages from builder
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
 COPY --from=builder /app/src /app/src
 COPY --from=builder /app/pyproject.toml /app/pyproject.toml
-
-# Make sure scripts in .local are usable
-ENV PATH=/root/.local/bin:$PATH
 
 # Set up PYTHONPATH
 ENV PYTHONPATH=/app/src
 
 # Create directory for input/output images (for CLI usage)
 RUN mkdir -p /images
-
-# Set working directory for images
-WORKDIR /images
 
 # Expose port for webserver
 EXPOSE 8000
