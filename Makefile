@@ -1,4 +1,4 @@
-.PHONY: help install dev-install test lint format clean run
+.PHONY: help install dev-install test lint format clean run docker-build docker-run
 
 help:
 	@echo "Available commands:"
@@ -10,6 +10,8 @@ help:
 	@echo "  make format-html  - Format HTML with prettier"
 	@echo "  make clean        - Clean up cache and temporary files"
 	@echo "  make run          - Run the application"
+	@echo "  make docker-build - Build Docker image"
+	@echo "  make docker-run   - Run Docker container"
 
 install:
 	uv sync
@@ -41,3 +43,9 @@ clean:
 
 run:
 	uv run python -m upscaler
+
+docker-build:
+	docker build -t upscaler:latest .
+
+docker-run:
+	docker run -p 8000:8000 upscaler:latest
