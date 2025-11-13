@@ -42,6 +42,7 @@ uploads/
 outputs/
 *.jpg
 *.jpeg
+!panda-low.jpeg
 *.png
 *.gif
 *.bmp

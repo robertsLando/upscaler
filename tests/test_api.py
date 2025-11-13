@@ -53,6 +53,12 @@ class TestUpscaleEndpoint:
         img_bytes.seek(0)
         return img_bytes
 
+    def load_test_image(self):
+        """Load the real test image (panda-low.jpeg)."""
+        test_image_path = Path(__file__).parent / "assets" / "panda-low.jpeg"
+        with open(test_image_path, "rb") as f:
+            return io.BytesIO(f.read())
+
     def test_upscale_requires_image(self):
         """Test that upscale endpoint requires an image."""
         response = client.post("/upscale", data={"target_width": 400, "target_height": 400})
@@ -120,26 +126,26 @@ class TestUpscaleEndpoint:
 
     @pytest.mark.slow
     def test_upscale_success(self):
-        """Test successful image upscaling (slow test, requires model)."""
-        # Create a small test image
-        img_bytes = self.create_test_image(50, 50)
+        """Test successful image upscaling with real panda image (slow test, requires model)."""
+        # Load the real test image
+        img_bytes = self.load_test_image()
 
         response = client.post(
             "/upscale",
-            files={"image": ("test.jpg", img_bytes, "image/jpeg")},
-            data={"target_width": 200, "target_height": 200},
+            files={"image": ("panda-low.jpeg", img_bytes, "image/jpeg")},
+            data={"target_width": 512, "target_height": 512},
         )
 
         # This test requires the Real-ESRGAN model to be initialized
-        # It may fail or be slow on first run
-        assert response.status_code in [200, 500]  # 500 if model fails to load
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
-        if response.status_code == 200:
-            assert response.headers["content-type"] == "image/png"
-            # Verify we got an image back
-            output_img = Image.open(io.BytesIO(response.content))
-            assert output_img.size[0] <= 200
-            assert output_img.size[1] <= 200
+        assert response.headers["content-type"] == "image/png"
+        # Verify we got an image back
+        output_img = Image.open(io.BytesIO(response.content))
+        assert output_img.size[0] <= 512
+        assert output_img.size[1] <= 512
+        # Verify it's actually upscaled (should be larger than original low-res image)
+        assert output_img.size[0] > 100  # Should be significantly larger than tiny dimensions
 
     def test_upscale_with_cm_dpi_requires_all_params(self):
         """Test that cm/dpi mode requires all three parameters."""
@@ -233,27 +239,28 @@ class TestUpscaleEndpoint:
 
     @pytest.mark.slow
     def test_upscale_success_with_cm_dpi(self):
-        """Test successful image upscaling using cm/dpi (slow test, requires model)."""
-        # Create a small test image
-        img_bytes = self.create_test_image(50, 50)
+        """Test successful image upscaling using cm/dpi with real panda image (slow test, requires model)."""
+        # Load the real test image
+        img_bytes = self.load_test_image()
 
         # 5cm x 5cm at 100 DPI = approximately 197x197 pixels
         response = client.post(
             "/upscale",
-            files={"image": ("test.jpg", img_bytes, "image/jpeg")},
-            data={"width_cm": 5, "height_cm": 5, "dpi": 100},
+            files={"image": ("panda-low.jpeg", img_bytes, "image/jpeg")},
+            data={"width_cm": 10, "height_cm": 10, "dpi": 150},
         )
 
         # This test requires the Real-ESRGAN model to be initialized
-        assert response.status_code in [200, 500]  # 500 if model fails to load
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}"
 
-        if response.status_code == 200:
-            assert response.headers["content-type"] == "image/png"
-            # Verify we got an image back
-            output_img = Image.open(io.BytesIO(response.content))
-            # Should be around 197x197 pixels (allowing aspect ratio preservation)
-            assert output_img.size[0] <= 197
-            assert output_img.size[1] <= 197
+        assert response.headers["content-type"] == "image/png"
+        # Verify we got an image back
+        output_img = Image.open(io.BytesIO(response.content))
+        # 10cm x 10cm at 150 DPI = approximately 591x591 pixels
+        # Should fit within this size (allowing aspect ratio preservation)
+        assert output_img.size[0] <= 591
+        assert output_img.size[1] <= 591
+        assert output_img.size[0] > 100  # Should be upscaled
 
     def test_upscale_requires_either_pixels_or_cm_dpi(self):
         """Test that endpoint requires either pixel or cm/dpi parameters."""
