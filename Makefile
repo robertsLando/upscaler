@@ -13,12 +13,14 @@ help:
 
 install:
 	uv sync
+# Install package in editable mode, -e flag creates a link to your source code, so changes are immediately available without reinstalling
+	uv pip install -e .
 
 test:
-	PYTHONPATH=src uv run pytest tests/ -v
+	uv run pytest tests/ -v
 
 test-cov:
-	PYTHONPATH=src uv run pytest tests/ --cov=src/upscaler --cov-report=html --cov-report=term
+	uv run pytest tests/ --cov=src/upscaler --cov-report=html --cov-report=term
 
 lint:
 	uv run ruff check src/ tests/
@@ -38,4 +40,4 @@ clean:
 	rm -rf .pytest_cache .coverage htmlcov
 
 run:
-	PYTHONPATH=src uv run python -m upscaler
+	uv run python -m upscaler
