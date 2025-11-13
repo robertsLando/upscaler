@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, copilot/** ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -14,46 +14,28 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3.12'
         cache: 'pip'
     
-    - name: Cache uv
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/uv
-        key: ${{ runner.os }}-uv-${{ hashFiles('**/uv.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-uv-
-    
     - name: Install uv
       run: pip install uv
     
-    - name: Cache virtual environment
-      uses: actions/cache@v4
-      with:
-        path: .venv
-        key: ${{ runner.os }}-venv-${{ hashFiles('**/uv.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-venv-
-    
     - name: Install dependencies
       run: |
-        uv sync
-        uv pip install pytest pytest-cov ruff black httpx
+        make install
     
     - name: Run linters
       run: |
-        uv run ruff check src/ tests/
-        uv run black --check src/ tests/
+        make lint
     
     - name: Run tests
       run: |
-        PYTHONPATH=src uv run pytest tests/ -v --cov=src/upscaler --cov-report=xml --cov-report=term
+        make test-cov
     
     - name: Upload coverage reports
       uses: codecov/codecov-action@v4

@@ -14,9 +14,6 @@ help:
 install:
 	uv sync
 
-dev-install:
-	uv add --dev pytest pytest-cov ruff black commitizen
-
 test:
 	PYTHONPATH=src uv run pytest tests/ -v
 
