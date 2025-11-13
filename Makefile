@@ -20,7 +20,7 @@ test:
 	uv run pytest tests/ -v
 
 test-cov:
-	uv run pytest tests/ --cov=src/upscaler --cov-report=html --cov-report=term
+	uv run pytest tests/ --cov=src/upscaler --cov-report=html --cov-report=term --cov-report=xml
 
 lint:
 	uv run ruff check src/ tests/
