@@ -146,3 +146,24 @@ class TestResizeToTarget:
 
         # Should be 1440x1080 (limited by height)
         assert result2.size == (1440, 1080)
+
+    def test_resize_real_image(self, panda_pil_image):
+        """Test resizing the real panda test image."""
+        # Load real test image
+        img = panda_pil_image
+        original_size = img.size
+
+        # Resize to 800x800
+        result = resize_to_target(img, 800, 800)
+
+        # Should maintain aspect ratio and fit within 800x800
+        assert result.size[0] <= 800
+        assert result.size[1] <= 800
+        # At least one dimension should be 800 (or close due to aspect ratio)
+        assert max(result.size) >= 700
+
+        # Verify the image was actually resized
+        assert result.size != original_size
+
+        # Verify it's still an RGB image
+        assert result.mode == "RGB"

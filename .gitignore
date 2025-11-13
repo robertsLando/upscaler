@@ -43,6 +43,7 @@ outputs/
 images/
 *.jpg
 *.jpeg
+!panda-low.jpeg
 *.png
 *.gif
 *.bmp
