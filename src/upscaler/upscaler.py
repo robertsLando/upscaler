@@ -8,6 +8,9 @@ from PIL import Image
 
 logger = logging.getLogger(__name__)
 
+# Conversion constant
+WIDTH_INCH_CM = 2.54
+
 # Initialize Real-ESRGAN upsampler lazily to avoid startup delays
 _upsampler = None
 
@@ -57,6 +60,25 @@ def get_upsampler():
             logger.error(f"Failed to initialize Real-ESRGAN: {e}")
             raise
     return _upsampler
+
+
+def cm_to_pixels(width_cm: float, height_cm: float, dpi: int) -> tuple[int, int]:
+    """
+    Convert dimensions from centimeters to pixels.
+
+    Args:
+        width_cm: Width in centimeters
+        height_cm: Height in centimeters
+        dpi: Dots per inch (resolution)
+
+    Returns:
+        Tuple of (width_px, height_px) in pixels
+    """
+    width_inch = width_cm / WIDTH_INCH_CM
+    height_inch = height_cm / WIDTH_INCH_CM
+    width_px = int(round(width_inch * dpi))
+    height_px = int(round(height_inch * dpi))
+    return width_px, height_px
 
 
 def resize_to_target(image: Image.Image, target_width: int, target_height: int) -> Image.Image:
