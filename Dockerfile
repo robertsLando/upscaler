@@ -1,12 +1,13 @@
 # Multi-stage Dockerfile for upscaler
 # Supports both CLI and webserver modes
 
-FROM python:3.12-slim
+# Stage 1: Builder
+FROM python:3.12-slim AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies for building
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
@@ -19,7 +20,21 @@ COPY pyproject.toml ./
 COPY src/ src/
 
 # Install dependencies and the package
-RUN pip install --no-cache-dir -e .
+RUN pip install --no-cache-dir --user -e .
+
+# Stage 2: Runtime
+FROM python:3.12-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy only the necessary files from builder
+COPY --from=builder /root/.local /root/.local
+COPY --from=builder /app/src /app/src
+COPY --from=builder /app/pyproject.toml /app/pyproject.toml
+
+# Make sure scripts in .local are usable
+ENV PATH=/root/.local/bin:$PATH
 
 # Set up PYTHONPATH
 ENV PYTHONPATH=/app/src

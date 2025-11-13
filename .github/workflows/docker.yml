@@ -24,11 +24,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+      # Docker Hub login - commented out for now, only publishing to GitHub Container Registry
+      # - name: Log in to Docker Hub
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
       
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -42,7 +43,6 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ secrets.DOCKER_USERNAME }}/upscaler
             ghcr.io/${{ github.repository }}
           tags: |
             type=semver,pattern={{version}}
@@ -62,12 +62,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       
-      - name: Docker Hub description
-        uses: peter-evans/dockerhub-description@v4
-        if: github.event_name == 'release'
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: ${{ secrets.DOCKER_USERNAME }}/upscaler
-          short-description: "AI-powered image upscaler using Real-ESRGAN"
-          readme-filepath: ./README.md
+      # Docker Hub description update - commented out for now
+      # - name: Docker Hub description
+      #   uses: peter-evans/dockerhub-description@v4
+      #   if: github.event_name == 'release'
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
+      #     repository: ${{ secrets.DOCKER_USERNAME }}/upscaler
+      #     short-description: "AI-powered image upscaler using Real-ESRGAN"
+      #     readme-filepath: ./README.md
