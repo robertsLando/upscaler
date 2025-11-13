@@ -10,7 +10,59 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from PIL import Image
 
-from upscaler.upscaler import resize_to_target
+from upscaler.upscaler import cm_to_pixels, resize_to_target
+
+
+class TestCmToPixels:
+    """Tests for the cm_to_pixels function."""
+
+    def test_basic_conversion(self):
+        """Test basic cm to pixels conversion."""
+        # 10cm x 10cm at 300 DPI
+        width_px, height_px = cm_to_pixels(10, 10, 300)
+        # 10cm / 2.54 = 3.937 inches, 3.937 * 300 = 1181.1 pixels, rounded = 1181
+        assert width_px == 1181
+        assert height_px == 1181
+
+    def test_a4_size_300dpi(self):
+        """Test A4 paper size conversion at 300 DPI."""
+        # A4 is approximately 21 x 29.7 cm
+        width_px, height_px = cm_to_pixels(21, 29.7, 300)
+        # 21cm / 2.54 = 8.268 inches, 8.268 * 300 = 2480.4 pixels, rounded = 2480
+        # 29.7cm / 2.54 = 11.693 inches, 11.693 * 300 = 3507.9 pixels, rounded = 3508
+        assert width_px == 2480
+        assert height_px == 3508
+
+    def test_small_dimensions(self):
+        """Test small dimensions conversion."""
+        # 1cm x 1cm at 72 DPI (screen resolution)
+        width_px, height_px = cm_to_pixels(1, 1, 72)
+        # 1cm / 2.54 = 0.394 inches, 0.394 * 72 = 28.35 pixels, rounded = 28
+        assert width_px == 28
+        assert height_px == 28
+
+    def test_high_dpi(self):
+        """Test conversion with high DPI."""
+        # 5cm x 5cm at 600 DPI
+        width_px, height_px = cm_to_pixels(5, 5, 600)
+        # 5cm / 2.54 = 1.969 inches, 1.969 * 600 = 1181.4 pixels, rounded = 1181
+        assert width_px == 1181
+        assert height_px == 1181
+
+    def test_different_dimensions(self):
+        """Test conversion with different width and height."""
+        # 15cm x 10cm at 150 DPI
+        width_px, height_px = cm_to_pixels(15, 10, 150)
+        # 15cm / 2.54 = 5.906 inches, 5.906 * 150 = 885.9 pixels, rounded = 886
+        # 10cm / 2.54 = 3.937 inches, 3.937 * 150 = 590.55 pixels, rounded = 591
+        assert width_px == 886
+        assert height_px == 591
+
+    def test_returns_integers(self):
+        """Test that function returns integers."""
+        width_px, height_px = cm_to_pixels(7.5, 12.3, 200)
+        assert isinstance(width_px, int)
+        assert isinstance(height_px, int)
 
 
 class TestResizeToTarget:
