@@ -1,0 +1,19 @@
+services:
+  upscaler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: upscaler:latest
+    container_name: upscaler
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount a local directory for CLI usage
+      # Images placed in ./images will be accessible at /images in the container
+      - ./images:/images
+    environment:
+      # Add any environment variables here if needed
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    # Override command to use CLI mode:
+    # docker-compose run --rm upscaler upscaler-cli "/images/*.jpg" -w 1920 --height 1080

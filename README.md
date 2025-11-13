@@ -9,6 +9,21 @@ AI-powered image upscaler using Real-ESRGAN with a web API and UI.
 
 ## Quick Start
 
+### With Docker (Easiest)
+
+```bash
+# Clone the repository
+git clone https://github.com/robertsLando/upscaler.git
+cd upscaler
+
+# Start with docker-compose
+docker-compose up
+```
+
+Then open http://localhost:8000 in your browser! 🚀
+
+### Without Docker
+
 ```bash
 # Install uv
 pip install uv
@@ -28,6 +43,7 @@ Then open http://localhost:8000 in your browser! 🚀
 ## Features
 
 - 🚀 Fast image upscaling using Real-ESRGAN
+- 🐳 Docker support for easy deployment
 - 💻 Command-line interface for batch processing with glob patterns
 - 🎨 Web UI for easy image upload and download
 - 📐 Aspect ratio preservation
@@ -44,7 +60,71 @@ Then open http://localhost:8000 in your browser! 🚀
 - Python 3.12+
 - uv package manager
 
+**OR**
+
+- Docker (for containerized usage)
+
 ## Installation
+
+### Option 1: Using Docker (Recommended)
+
+Docker provides the easiest way to run the upscaler without installing dependencies.
+
+#### Using Docker Compose
+
+1. Clone the repository:
+```bash
+git clone https://github.com/robertsLando/upscaler.git
+cd upscaler
+```
+
+2. Start the webserver:
+```bash
+docker-compose up
+```
+
+The server will be available at `http://localhost:8000`
+
+3. Using the CLI:
+```bash
+# Create an images directory and place your images there
+mkdir -p images
+cp your-image.jpg images/
+
+# Run the CLI to upscale images
+docker-compose run --rm upscaler upscaler-cli "/images/*.jpg" -w 1920 --height 1080
+
+# Upscaled images will be saved in the images/ directory
+```
+
+#### Using Docker directly
+
+1. Pull the image:
+```bash
+docker pull ghcr.io/robertslando/upscaler:latest
+# Or from Docker Hub:
+# docker pull <username>/upscaler:latest
+```
+
+2. Run the webserver:
+```bash
+docker run -p 8000:8000 ghcr.io/robertslando/upscaler:latest
+```
+
+3. Use the CLI:
+```bash
+# Mount a local directory with images
+docker run -v $(pwd)/images:/images ghcr.io/robertslando/upscaler:latest \
+  upscaler-cli "/images/*.jpg" -w 1920 --height 1080
+```
+
+4. Build locally:
+```bash
+docker build -t upscaler .
+docker run -p 8000:8000 upscaler
+```
+
+### Option 2: Local Installation
 
 1. Install uv if you haven't already:
 ```bash
