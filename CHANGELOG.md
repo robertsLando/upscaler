@@ -1,3 +1,18 @@
+## 1.1.0 (2025-11-13)
+
+### Feat
+
+- add real test image (panda-low.jpeg) and update tests to use it for upscaling and resizing (#8)
+- add Docker support with multi-platform builds and automated publishing (#7)
+- add CLI entrypoint for batch image upscaling with glob patterns and cm/DPI support (#3)
+- add centimeter/DPI dimension input mode (#5)
+
+### Fix
+
+- correct coverage report configuration in CI and Makefile
+- simplify Makefile commands by removing unnecessary PYTHONPATH assignments
+- correct authors section formatting in pyproject.toml
+
 ## 1.0.0 (2025-11-12)
 
 ### Feat
