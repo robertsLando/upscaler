@@ -53,12 +53,6 @@ class TestUpscaleEndpoint:
         img_bytes.seek(0)
         return img_bytes
 
-    def load_test_image(self):
-        """Load the real test image (panda-low.jpeg)."""
-        test_image_path = Path(__file__).parent / "assets" / "panda-low.jpeg"
-        with open(test_image_path, "rb") as f:
-            return io.BytesIO(f.read())
-
     def test_upscale_requires_image(self):
         """Test that upscale endpoint requires an image."""
         response = client.post("/upscale", data={"target_width": 400, "target_height": 400})
@@ -125,10 +119,10 @@ class TestUpscaleEndpoint:
         assert response.status_code == 400
 
     @pytest.mark.slow
-    def test_upscale_success(self):
+    def test_upscale_success(self, panda_test_image):
         """Test successful image upscaling with real panda image (slow test, requires model)."""
         # Load the real test image
-        img_bytes = self.load_test_image()
+        img_bytes = panda_test_image
 
         response = client.post(
             "/upscale",
@@ -238,12 +232,12 @@ class TestUpscaleEndpoint:
         assert response.status_code == 400
 
     @pytest.mark.slow
-    def test_upscale_success_with_cm_dpi(self):
+    def test_upscale_success_with_cm_dpi(self, panda_test_image):
         """Test successful image upscaling using cm/dpi with real panda image (slow test, requires model)."""
         # Load the real test image
-        img_bytes = self.load_test_image()
+        img_bytes = panda_test_image
 
-        # 5cm x 5cm at 100 DPI = approximately 197x197 pixels
+        # 10cm x 10cm at 150 DPI = approximately 591x591 pixels
         response = client.post(
             "/upscale",
             files={"image": ("panda-low.jpeg", img_bytes, "image/jpeg")},
