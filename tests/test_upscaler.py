@@ -68,11 +68,6 @@ class TestCmToPixels:
 class TestResizeToTarget:
     """Tests for the resize_to_target function."""
 
-    def load_test_image(self):
-        """Load the real test image (panda-low.jpeg)."""
-        test_image_path = Path(__file__).parent / "assets" / "panda-low.jpeg"
-        return Image.open(test_image_path)
-
     def test_resize_wider_image(self):
         """Test resizing a wider image maintains aspect ratio."""
         # Create a 200x100 image (2:1 aspect ratio)
@@ -152,10 +147,10 @@ class TestResizeToTarget:
         # Should be 1440x1080 (limited by height)
         assert result2.size == (1440, 1080)
 
-    def test_resize_real_image(self):
+    def test_resize_real_image(self, panda_pil_image):
         """Test resizing the real panda test image."""
         # Load real test image
-        img = self.load_test_image()
+        img = panda_pil_image
         original_size = img.size
 
         # Resize to 800x800
