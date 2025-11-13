@@ -40,6 +40,7 @@ Thumbs.db
 # Uploads and outputs
 uploads/
 outputs/
+images/
 *.jpg
 *.jpeg
 *.png
