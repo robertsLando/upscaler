@@ -306,12 +306,20 @@ footer a:hover {
 
 /* Mobile optimizations */
 @media (max-width: 768px) {
-  .images-container.active {
+  .images-container {
     grid-template-columns: 1fr;
   }
 
   .dimension-inputs {
     grid-template-columns: 1fr;
+  }
+
+  .image-preview h3 {
+    font-size: 1.1rem;
+  }
+
+  .image-info {
+    font-size: 0.85rem;
   }
 }
 
