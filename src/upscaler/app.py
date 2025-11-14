@@ -8,6 +8,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from PIL import Image
 
 from .upscaler import cm_to_pixels
@@ -19,8 +20,12 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Image Upscaler API", description="Upscale images using Real-ESRGAN")
 
-# Get the templates directory
+# Get the templates and static directories
 TEMPLATES_DIR = Path(__file__).parent / "templates"
+STATIC_DIR = Path(__file__).parent / "static"
+
+# Mount static files
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 @app.get("/")
