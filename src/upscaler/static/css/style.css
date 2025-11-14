@@ -244,6 +244,22 @@ button:disabled {
   }
 }
 
+/* Loading container styles */
+.loading-container {
+  text-align: center;
+  padding: 40px;
+}
+
+.loading-icon {
+  font-size: 3rem;
+  color: #4caf50;
+  margin-bottom: 10px;
+}
+
+.loading-text {
+  color: #666;
+}
+
 .download-btn-container {
   margin-top: 20px;
   text-align: center;

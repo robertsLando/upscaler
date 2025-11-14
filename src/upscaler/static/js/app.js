@@ -1,7 +1,7 @@
 let uploadedImageData = null;
 let currentMode = "pixel";
 let originalImageFile = null;
-let originalImageDimensions = null;
+let previousUpscaledImageUrl = null;
 
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
@@ -78,23 +78,14 @@ function handleFile(file) {
   reader.onload = (e) => {
     const img = new Image();
     img.onload = () => {
-      // Store original dimensions
-      originalImageDimensions = {
-        width: img.width,
-        height: img.height,
-      };
-
-      // Calculate DPI (assume 96 DPI as default for web images)
-      const dpi = 96;
-
       // Show original image
       const originalImg = document.getElementById("originalImg");
       originalImg.src = e.target.result;
 
-      // Update image info
+      // Update image info - display actual dimensions, note DPI is estimated
       document.getElementById("originalDimensions").textContent =
         `${img.width} × ${img.height} px`;
-      document.getElementById("originalDpi").textContent = `${dpi} DPI`;
+      document.getElementById("originalDpi").textContent = `96 DPI (estimated)`;
 
       // Show original preview container
       document.getElementById("originalPreview").style.display = "block";
@@ -102,6 +93,9 @@ function handleFile(file) {
       // Hide upscaled preview
       document.getElementById("upscaledPreview").style.display = "none";
       document.querySelector(".download-btn-container").style.display = "none";
+    };
+    img.onerror = () => {
+      showStatus("error", "Failed to load image. The file may be corrupted or in an unsupported format.");
     };
     img.src = e.target.result;
   };
@@ -169,9 +163,9 @@ function initializeForm() {
 
     const upscaledWrapper = document.querySelector("#upscaledPreview .image-wrapper");
     upscaledWrapper.innerHTML = `
-      <div class="loading-pulse" style="text-align: center; padding: 40px;">
-        <div style="font-size: 3rem; color: #4caf50; margin-bottom: 10px;">⏳</div>
-        <div style="color: #666;">Processing...</div>
+      <div class="loading-pulse loading-container">
+        <div class="loading-icon">⏳</div>
+        <div class="loading-text">Processing...</div>
       </div>
       <div class="loading-shimmer"></div>
     `;
@@ -189,7 +183,14 @@ function initializeForm() {
 
       const blob = await response.blob();
       uploadedImageData = blob;
+      
+      // Revoke previous URL if exists to prevent memory leak
+      if (previousUpscaledImageUrl) {
+        URL.revokeObjectURL(previousUpscaledImageUrl);
+      }
+      
       const imageUrl = URL.createObjectURL(blob);
+      previousUpscaledImageUrl = imageUrl;
 
       // Load the upscaled image to get dimensions
       const img = new Image();
@@ -197,19 +198,29 @@ function initializeForm() {
         // Update upscaled image
         upscaledWrapper.innerHTML = `<img id="upscaledImg" src="${imageUrl}" alt="Upscaled image" />`;
 
-        // Calculate DPI (assume 96 DPI as default)
-        const dpi = 96;
-
-        // Update image info
+        // Update image info - display actual dimensions, note DPI is estimated
         document.getElementById("upscaledDimensions").textContent =
           `${img.width} × ${img.height} px`;
-        document.getElementById("upscaledDpi").textContent = `${dpi} DPI`;
+        document.getElementById("upscaledDpi").textContent = `96 DPI (estimated)`;
 
         // Show download button
         document.querySelector(".download-btn-container").style.display = "block";
 
         statusDiv.className = "success";
         statusDiv.textContent = "✓ Image upscaled successfully!";
+      };
+      img.onerror = () => {
+        statusDiv.className = "error";
+        statusDiv.textContent = "✗ Error: Failed to load upscaled image.";
+        upscaledWrapper.innerHTML = "";
+        upscaledPreview.style.display = "none";
+        submitBtn.disabled = false;
+        
+        // Revoke URL on error
+        if (imageUrl) {
+          URL.revokeObjectURL(imageUrl);
+          previousUpscaledImageUrl = null;
+        }
       };
       img.src = imageUrl;
     } catch (error) {
