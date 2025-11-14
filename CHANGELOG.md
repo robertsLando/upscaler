@@ -1,3 +1,15 @@
+## 1.2.0 (2025-11-14)
+
+### Feat
+
+- **ui**: drag-and-drop upload with image previews, metadata display, panda logo branding, and asset generation (#13)
+
+### Fix
+
+- free disk space before multi-platform Docker build (#11)
+- update Docker image tag handling to include branch references and SHA
+- update Docker image tag input description and default value
+
 ## 1.1.0 (2025-11-13)
 
 ### Feat
