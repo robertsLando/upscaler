@@ -1,4 +1,4 @@
-.PHONY: help install dev-install test lint format clean run docker-build docker-run
+.PHONY: help install dev-install test lint format clean run docker-build docker-run generate-logo
 
 help:
 	@echo "Available commands:"
@@ -12,6 +12,7 @@ help:
 	@echo "  make run          - Run the application"
 	@echo "  make docker-build - Build Docker image"
 	@echo "  make docker-run   - Run Docker container"
+	@echo "  make generate-logo - Generate all logo assets from source logo"
 
 install:
 	uv sync
@@ -49,3 +50,12 @@ docker-build:
 
 docker-run:
 	docker run -p 8000:8000 upscaler:latest
+
+generate-logo:
+	@echo "Generating logo assets from source logo..."
+	@uv run python scripts/generate_logo_assets.py
+	@echo ""
+	@echo "✅ Logo assets generated!"
+	@echo "To use a custom logo:"
+	@echo "  1. Replace assets/logo/panda-logo.png with your 512x512 logo"
+	@echo "  2. Run: make generate-logo"
