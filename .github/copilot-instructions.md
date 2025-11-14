@@ -8,7 +8,13 @@ This is a Python web application that provides AI-powered image upscaling using 
 - **Framework**: FastAPI for web API with uvicorn server
 - **AI Model**: Real-ESRGAN x4plus for image upscaling (lazy loaded)
 - **Templates**: HTML templates stored in `src/upscaler/templates/`
+- **Static Files**: CSS and JavaScript files in `src/upscaler/static/`
+  - `static/css/style.css`: All UI styles
+  - `static/js/app.js`: All UI JavaScript logic
 - **Tests**: Pytest-based tests in `tests/` directory
+
+## Self-Maintenance
+**IMPORTANT**: When making changes to the codebase structure, architecture, or key patterns, **always update this copilot-instructions.md file** to keep it synchronized with the current state of the project. This ensures consistency and helps future development.
 
 ## Development Guidelines
 
@@ -30,6 +36,11 @@ This is a Python web application that provides AI-powered image upscaling using 
 - **Formatting**: Use black for code formatting (line length: 100)
 - **HTML/CSS/JS**: Use prettier for formatting (configured in `.prettierrc`)
 - **Imports**: Keep imports organized (stdlib → third-party → local)
+- **Mobile-First**: Always ensure UI is user-friendly on smartphone devices
+  - Use responsive design patterns
+  - Test touch interactions and tap targets (minimum 44×44px)
+  - Use appropriate font sizes (minimum 16px for inputs to prevent zoom on iOS)
+  - Stack layouts vertically on small screens
 
 ### Commit Messages
 Follow the [Conventional Commits](https://www.conventionalcommits.org/) standard for all commit messages:
@@ -91,13 +102,16 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/) standard
 - `src/upscaler/upscaler.py`: Core upscaling logic with Real-ESRGAN
 - `src/upscaler/utils.py`: Shared utility functions (e.g., upscale_image)
 - `src/upscaler/cli.py`: Command-line interface for batch processing
-- `src/upscaler/templates/index.html`: Web UI
+- `src/upscaler/templates/index.html`: Web UI HTML template
+- `src/upscaler/static/css/style.css`: All UI styles (responsive, mobile-first)
+- `src/upscaler/static/js/app.js`: All UI JavaScript logic (drag-and-drop, previews)
 - `tests/test_api.py`: API integration tests
 - `tests/test_upscaler.py`: Unit tests for upscaling logic
 - `tests/test_utils.py`: Tests for shared utility functions
 - `tests/test_cli.py`: CLI tests
 - `pyproject.toml`: Project configuration and dependencies
 - `Makefile`: Development workflow commands
+- `.github/copilot-instructions.md`: This file - keep it updated!
 
 ## Common Patterns
 
@@ -122,6 +136,18 @@ async def endpoint_handler(
 - Use numpy arrays for AI model processing
 - Use PIL Image for resizing and format conversion
 - Save output as PNG format
+
+### UI Patterns
+- **Drag-and-Drop**: Use HTML5 File API for file uploads with visual feedback
+- **Responsive Layout**: CSS Grid for side-by-side displays that stack on mobile
+- **Loading States**: CSS-only animations (shimmer, pulse) for performance
+- **Image Previews**: Show original immediately on selection, upscaled after processing
+- **Metadata Display**: Show dimensions (width × height px) and DPI for both images
+- **Touch-Friendly**: Minimum 44×44px tap targets, 16px minimum input font size
+- **Mobile Breakpoints**:
+  - `max-width: 600px`: Smartphone optimizations
+  - `max-width: 768px`: Tablet and smaller devices (stack images)
+  - `601px - 900px`: Tablet range
 
 ### Error Handling
 - Catch exceptions and log them

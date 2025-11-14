@@ -5,6 +5,10 @@
 [![Python Version](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+<p align="center">
+  <img src="assets/logo/panda-logo.png" alt="Pandas Image Upscaler Logo" width="256" height="256">
+</p>
+
 AI-powered image upscaler using Real-ESRGAN with a web API and UI.
 
 ## Quick Start
