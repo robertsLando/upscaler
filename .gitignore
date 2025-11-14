@@ -45,6 +45,8 @@ images/
 *.jpeg
 !panda-low.jpeg
 *.png
+!src/upscaler/static/logo/*.png
+!assets/logo/*.png
 *.gif
 *.bmp
 *.webp
